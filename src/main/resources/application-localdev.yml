@@ -1,5 +1,25 @@
 spring:
+  flyway:
+    locations:
+      - classpath:/db/migration
+      - classpath:/db/dev/migration
+  security:
+    oauth2:
+      resourceserver:
+        jwt:
+          issuer-uri: ${application.keycloak.auth-server-url}/realms/${application.keycloak.realm}
   datasource:
     url: jdbc:postgresql://localhost:5432/ledgerview
     username: admin
     password: password
+
+application:
+  keycloak:
+    realm: ledgerview
+    auth-server-url: http://localhost:8180
+  cors:
+    allowed-origins: https://localhost:4443
+
+logging:
+  level:
+    com.example.ledgerview: DEBUG
