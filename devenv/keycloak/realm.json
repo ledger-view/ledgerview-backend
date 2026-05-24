@@ -1,0 +1,165 @@
+{
+  "realm": "ledgerview",
+  "displayName": "LedgerView",
+  "enabled": true,
+  "sslRequired": "none",
+  "registrationAllowed": true,
+  "requiredCredentials": [
+    "password"
+  ],
+  "registrationEmailAsUsername": true,
+  "roles": {
+    "realm": [
+      {
+        "name": "user",
+        "description": "User privileges"
+      },
+      {
+        "name": "admin",
+        "description": "Administrator privileges"
+      }
+    ],
+    "client": {
+      "ledgerview-web": [
+        {
+          "name": "ADMIN",
+          "description": "ledgerview admin",
+          "composite": false,
+          "clientRole": true,
+          "attributes": {}
+        },
+        {
+          "name": "USER",
+          "description": "ledgerview user",
+          "composite": false,
+          "clientRole": true,
+          "attributes": {}
+        },
+        {
+          "name": "GUEST",
+          "description": "ledgerview guest",
+          "composite": false,
+          "clientRole": true,
+          "attributes": {}
+        }
+      ]
+    }
+  },
+  "scopeMappings": [
+    {
+      "client": "ledgerview-web",
+      "roles": [
+        "user",
+        "admin"
+      ]
+    }
+  ],
+  "clients": [
+    {
+      "clientId": "ledgerview-web",
+      "name": "ledgerview-web",
+      "enabled": true,
+      "publicClient": true,
+      "bearerOnly": false,
+      "standardFlowEnabled": true,
+      "directAccessGrantsEnabled": true,
+      "baseUrl": "",
+      "redirectUris": [
+        "http://localhost:4443/*",
+        "http://localhost:8080/*",
+        "http://localhost:4200/*",
+        "https://localhost:443/*",
+        "https://localhost:4443/*"
+      ],
+      "webOrigins": [
+        "http://localhost:4443",
+        "http://localhost:8080",
+        "https://localhost:443",
+        "http://localhost:4200",
+        "https://localhost:4443"
+      ],
+      "protocolMappers": [
+        {
+          "name": "Client roles",
+          "protocol": "openid-connect",
+          "protocolMapper": "oidc-usermodel-client-role-mapper",
+          "consentRequired": false,
+          "config": {
+            "usermodel.clientRoleMapping.rolePrefix": "ROLE_",
+            "multivalued": "true",
+            "userinfo.token.claim": "true",
+            "id.token.claim": "true",
+            "access.token.claim": "true",
+            "claim.name": "roles",
+            "jsonType.label": "String",
+            "usermodel.clientRoleMapping.clientId": "ledgerview-web"
+          }
+        }
+      ]
+    }
+  ],
+  "users": [
+    {
+      "username": "admin@example.com",
+      "enabled": true,
+      "email": "admin@example.com",
+      "firstName": "Admin",
+      "lastName": "Ledgerview",
+      "credentials": [
+        {
+          "type": "password",
+          "value": "password",
+          "temporary": false
+        }
+      ],
+      "realmRoles": [
+        "admin"
+      ],
+      "clientRoles": {
+        "ledgerview-web": [
+          "ADMIN"
+        ]
+      }
+    },
+    {
+      "username": "user@example.com",
+      "enabled": true,
+      "email": "user@example.com",
+      "firstName": "User",
+      "lastName": "Ledgerview",
+      "credentials": [
+        {
+          "type": "password",
+          "value": "password",
+          "temporary": false
+        }
+      ],
+      "realmRoles": [],
+      "clientRoles": {
+        "ledgerview-web": [
+          "USER"
+        ]
+      }
+    },
+    {
+      "username": "guest@example.com",
+      "enabled": true,
+      "email": "guest@example.com",
+      "firstName": "Guest",
+      "lastName": "Ledgerview",
+      "credentials": [
+        {
+          "type": "password",
+          "value": "password",
+          "temporary": false
+        }
+      ],
+      "realmRoles": [],
+      "clientRoles": {
+        "ledgerview-web": [
+          "GUEST"
+        ]
+      }
+    }
+  ]
+}
