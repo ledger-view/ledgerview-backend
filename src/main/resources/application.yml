@@ -1,3 +1,14 @@
 spring:
   application:
     name: ledgerview
+  datasource:
+    driver-class-name: org.postgresql.Driver
+  jpa:
+    hibernate:
+      ddl-auto: validate
+  flyway:
+    url: ${spring.datasource.url}
+    user: ${spring.datasource.username}
+    password: ${spring.datasource.password}
+    locations:
+      - classpath:/db/migration
