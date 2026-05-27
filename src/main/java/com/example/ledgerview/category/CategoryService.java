@@ -1,5 +1,6 @@
 package com.example.ledgerview.category;
 
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -42,7 +43,12 @@ public class CategoryService {
     public void delete(UUID userId, UUID id) {
         Category category = repository.findByIdAndUserId(id, userId)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
-        repository.delete(category);
+        try {
+            repository.delete(category);
+            repository.flush();
+        } catch (DataIntegrityViolationException e) {
+            throw new ResponseStatusException(HttpStatus.CONFLICT, "Category is used by existing transactions");
+        }
     }
 
     private void apply(Category category, CategoryController.CategoryRequest req) {
