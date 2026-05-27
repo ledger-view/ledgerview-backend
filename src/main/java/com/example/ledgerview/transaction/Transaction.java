@@ -5,7 +5,7 @@ import lombok.Getter;
 import lombok.Setter;
 
 import java.math.BigDecimal;
-import java.time.LocalDate;
+import java.time.Instant;
 import java.util.UUID;
 
 @Getter
@@ -38,7 +38,7 @@ public class Transaction {
     private TransactionType type;
 
     @Column(nullable = false)
-    private LocalDate date;
+    private Instant date;
 
     @Column(length = 512)
     private String note;

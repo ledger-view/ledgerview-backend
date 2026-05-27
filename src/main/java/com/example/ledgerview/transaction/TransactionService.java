@@ -5,13 +5,12 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.domain.Specification;
-import java.util.List;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.server.ResponseStatusException;
 
-import java.time.LocalDate;
+import java.time.Instant;
 import java.util.List;
 import java.util.UUID;
 
@@ -26,7 +25,7 @@ public class TransactionService {
 
     @Transactional(readOnly = true)
     public Page<Transaction> list(UUID userId, UUID accountId, UUID categoryId, TransactionType type,
-                                  LocalDate dateFrom, LocalDate dateTo,
+                                  Instant dateFrom, Instant dateTo,
                                   int page, int size, String sortField, String sortDir) {
         Specification<Transaction> spec = TransactionSpec.hasUserId(userId);
         if (accountId != null)  spec = spec.and(TransactionSpec.hasAccountId(accountId));
@@ -40,7 +39,7 @@ public class TransactionService {
     }
 
     @Transactional(readOnly = true)
-    public List<Transaction> listByUserAndTypeAndDateBetween(UUID userId, TransactionType type, LocalDate from, LocalDate to) {
+    public List<Transaction> listByUserAndTypeAndDateBetween(UUID userId, TransactionType type, Instant from, Instant to) {
         return repository.findByUserIdAndTypeAndDateBetween(userId, type, from, to);
     }
 

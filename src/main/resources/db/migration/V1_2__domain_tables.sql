@@ -36,7 +36,7 @@ CREATE TABLE ledgerview.transactions
     title       VARCHAR(256)   NOT NULL,
     amount      NUMERIC(19, 4) NOT NULL,
     type        VARCHAR(16)    NOT NULL,
-    date        DATE           NOT NULL,
+    date        TIMESTAMP      NOT NULL,
     note        VARCHAR(512),
     CONSTRAINT transactions_pk PRIMARY KEY (id),
     CONSTRAINT transactions_user_fk FOREIGN KEY (user_id) REFERENCES ledgerview.users (id) ON DELETE CASCADE,

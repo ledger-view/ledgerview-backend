@@ -11,7 +11,7 @@ import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 import java.math.BigDecimal;
-import java.time.LocalDate;
+import java.time.Instant;
 import java.util.UUID;
 
 @RestController
@@ -22,7 +22,7 @@ public class TransactionController {
             @NotBlank String title,
             @NotNull BigDecimal amount,
             @NotNull TransactionType type,
-            @NotNull LocalDate date,
+            @NotNull Instant date,
             @NotNull UUID categoryId,
             @NotNull UUID accountId,
             String note
@@ -33,7 +33,7 @@ public class TransactionController {
             String title,
             BigDecimal amount,
             TransactionType type,
-            LocalDate date,
+            Instant date,
             UUID categoryId,
             UUID accountId,
             String note
@@ -50,8 +50,8 @@ public class TransactionController {
             @RequestParam(required = false) UUID accountId,
             @RequestParam(required = false) UUID categoryId,
             @RequestParam(required = false) TransactionType type,
-            @RequestParam(required = false) LocalDate dateFrom,
-            @RequestParam(required = false) LocalDate dateTo,
+            @RequestParam(required = false) Instant dateFrom,
+            @RequestParam(required = false) Instant dateTo,
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "12") int size,
             @RequestParam(defaultValue = "date") String sort,

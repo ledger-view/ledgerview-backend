@@ -11,7 +11,9 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
+import java.time.Instant;
 import java.time.LocalDate;
+import java.time.ZoneOffset;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
@@ -37,8 +39,9 @@ public class DashboardService {
     public DashboardController.SummaryResponse summary(UUID userId) {
         BigDecimal totalBalance = accountRepository.sumBalanceByUserId(userId);
 
-        LocalDate firstOfMonth = LocalDate.now().withDayOfMonth(1);
-        LocalDate lastOfMonth = LocalDate.now().withDayOfMonth(LocalDate.now().lengthOfMonth());
+        LocalDate today = LocalDate.now(ZoneOffset.UTC);
+        Instant firstOfMonth = today.withDayOfMonth(1).atStartOfDay(ZoneOffset.UTC).toInstant();
+        Instant lastOfMonth = today.withDayOfMonth(today.lengthOfMonth()).atTime(23, 59, 59).atZone(ZoneOffset.UTC).toInstant();
 
         BigDecimal monthlyIncome = transactionRepository.sumByUserIdAndTypeAndDateBetween(
                 userId, TransactionType.INCOME, firstOfMonth, lastOfMonth);
@@ -64,8 +67,9 @@ public class DashboardService {
 
     @Transactional(readOnly = true)
     public List<DashboardController.ExpenseByCategoryResponse> expensesByCategory(UUID userId, int year, int month) {
-        LocalDate from = LocalDate.of(year, month, 1);
-        LocalDate to = from.withDayOfMonth(from.lengthOfMonth());
+        LocalDate start = LocalDate.of(year, month, 1);
+        Instant from = start.atStartOfDay(ZoneOffset.UTC).toInstant();
+        Instant to = start.withDayOfMonth(start.lengthOfMonth()).atTime(23, 59, 59).atZone(ZoneOffset.UTC).toInstant();
 
         Map<UUID, Category> categoryMap = categoryRepository.findAllByUserIdOrderByName(userId)
                 .stream().collect(Collectors.toMap(Category::getId, c -> c));

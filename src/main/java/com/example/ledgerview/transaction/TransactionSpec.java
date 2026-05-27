@@ -2,7 +2,7 @@ package com.example.ledgerview.transaction;
 
 import org.springframework.data.jpa.domain.Specification;
 
-import java.time.LocalDate;
+import java.time.Instant;
 import java.util.UUID;
 
 class TransactionSpec {
@@ -23,11 +23,11 @@ class TransactionSpec {
         return (root, query, cb) -> cb.equal(root.get("type"), type);
     }
 
-    static Specification<Transaction> dateFrom(LocalDate from) {
+    static Specification<Transaction> dateFrom(Instant from) {
         return (root, query, cb) -> cb.greaterThanOrEqualTo(root.get("date"), from);
     }
 
-    static Specification<Transaction> dateTo(LocalDate to) {
+    static Specification<Transaction> dateTo(Instant to) {
         return (root, query, cb) -> cb.lessThanOrEqualTo(root.get("date"), to);
     }
 }
