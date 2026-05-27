@@ -17,17 +17,20 @@ import java.util.UUID;
 @RequestMapping(ApiPaths.DASHBOARD)
 public class DashboardController {
 
+    record CurrencyAmount(String currency, BigDecimal amount) {}
+
     record SummaryResponse(
-            BigDecimal totalBalance,
-            BigDecimal monthlyIncome,
-            BigDecimal monthlyExpenses,
-            BigDecimal netFlow
+            List<CurrencyAmount> totalBalance,
+            List<CurrencyAmount> monthlyIncome,
+            List<CurrencyAmount> monthlyExpenses,
+            List<CurrencyAmount> netFlow
     ) {}
 
     record ExpenseByCategoryResponse(
             UUID categoryId,
             String categoryName,
             String categoryColor,
+            String currency,
             BigDecimal total
     ) {}
 

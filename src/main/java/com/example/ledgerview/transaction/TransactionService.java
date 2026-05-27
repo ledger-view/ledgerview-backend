@@ -1,5 +1,6 @@
 package com.example.ledgerview.transaction;
 
+import com.example.ledgerview.account.AccountRepository;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -11,16 +12,17 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.time.Instant;
-import java.util.List;
 import java.util.UUID;
 
 @Service
 public class TransactionService {
 
     private final TransactionRepository repository;
+    private final AccountRepository accountRepository;
 
-    public TransactionService(TransactionRepository repository) {
+    public TransactionService(TransactionRepository repository, AccountRepository accountRepository) {
         this.repository = repository;
+        this.accountRepository = accountRepository;
     }
 
     @Transactional(readOnly = true)
@@ -38,24 +40,21 @@ public class TransactionService {
         return repository.findAll(spec, pageable);
     }
 
-    @Transactional(readOnly = true)
-    public List<Transaction> listByUserAndTypeAndDateBetween(UUID userId, TransactionType type, Instant from, Instant to) {
-        return repository.findByUserIdAndTypeAndDateBetween(userId, type, from, to);
-    }
-
     @Transactional
     public Transaction create(UUID userId, TransactionController.TransactionRequest req) {
+        String currency = resolveAccountCurrency(userId, req.accountId());
         Transaction tx = new Transaction();
         tx.setUserId(userId);
-        apply(tx, req);
+        apply(tx, req, currency);
         return repository.save(tx);
     }
 
     @Transactional
     public Transaction update(UUID userId, UUID id, TransactionController.TransactionRequest req) {
+        String currency = resolveAccountCurrency(userId, req.accountId());
         Transaction tx = repository.findByIdAndUserId(id, userId)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
-        apply(tx, req);
+        apply(tx, req, currency);
         return repository.save(tx);
     }
 
@@ -66,10 +65,17 @@ public class TransactionService {
         repository.delete(tx);
     }
 
-    private void apply(Transaction tx, TransactionController.TransactionRequest req) {
+    private String resolveAccountCurrency(UUID userId, UUID accountId) {
+        return accountRepository.findByIdAndUserId(accountId, userId)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Account not found"))
+                .getCurrency();
+    }
+
+    private void apply(Transaction tx, TransactionController.TransactionRequest req, String currency) {
         tx.setTitle(req.title());
         tx.setAmount(req.amount());
         tx.setType(req.type());
+        tx.setCurrency(currency);
         tx.setDate(req.date());
         tx.setCategoryId(req.categoryId());
         tx.setAccountId(req.accountId());

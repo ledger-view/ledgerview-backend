@@ -37,6 +37,9 @@ public class Transaction {
     @Column(nullable = false, length = 16)
     private TransactionType type;
 
+    @Column(nullable = false, length = 8)
+    private String currency;
+
     @Column(nullable = false)
     private Instant date;
 

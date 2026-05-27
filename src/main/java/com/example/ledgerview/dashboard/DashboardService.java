@@ -14,10 +14,7 @@ import java.math.BigDecimal;
 import java.time.Instant;
 import java.time.LocalDate;
 import java.time.ZoneOffset;
-import java.util.Comparator;
-import java.util.List;
-import java.util.Map;
-import java.util.UUID;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
@@ -37,30 +34,61 @@ public class DashboardService {
 
     @Transactional(readOnly = true)
     public DashboardController.SummaryResponse summary(UUID userId) {
-        BigDecimal totalBalance = accountRepository.sumBalanceByUserId(userId);
+        List<DashboardController.CurrencyAmount> totalBalance = accountRepository
+                .sumBalanceByCurrencyAndUserId(userId)
+                .stream()
+                .map(row -> new DashboardController.CurrencyAmount((String) row[0], (BigDecimal) row[1]))
+                .sorted(Comparator.comparing(DashboardController.CurrencyAmount::currency))
+                .toList();
 
         LocalDate today = LocalDate.now(ZoneOffset.UTC);
-        Instant firstOfMonth = today.withDayOfMonth(1).atStartOfDay(ZoneOffset.UTC).toInstant();
-        Instant lastOfMonth = today.withDayOfMonth(today.lengthOfMonth()).atTime(23, 59, 59).atZone(ZoneOffset.UTC).toInstant();
-
-        BigDecimal monthlyIncome = transactionRepository.sumByUserIdAndTypeAndDateBetween(
-                userId, TransactionType.INCOME, firstOfMonth, lastOfMonth);
+        Instant from = today.withDayOfMonth(1).atStartOfDay(ZoneOffset.UTC).toInstant();
+        Instant to = today.withDayOfMonth(today.lengthOfMonth()).atTime(23, 59, 59).atZone(ZoneOffset.UTC).toInstant();
 
         Map<UUID, Category> categoryMap = categoryRepository.findAllByUserIdOrderByName(userId)
                 .stream().collect(Collectors.toMap(Category::getId, c -> c));
 
-        List<Transaction> expenseTransactions = transactionRepository.findByUserIdAndTypeAndDateBetween(
-                userId, TransactionType.EXPENSE, firstOfMonth, lastOfMonth);
+        Map<String, BigDecimal> incomeByCurrency = transactionRepository
+                .findByUserIdAndTypeAndDateBetween(userId, TransactionType.INCOME, from, to)
+                .stream()
+                .collect(Collectors.groupingBy(
+                        Transaction::getCurrency,
+                        Collectors.reducing(BigDecimal.ZERO, t -> t.getAmount().abs(), BigDecimal::add)
+                ));
 
-        BigDecimal monthlyExpenses = expenseTransactions.stream()
+        Map<String, BigDecimal> expenseByCurrency = transactionRepository
+                .findByUserIdAndTypeAndDateBetween(userId, TransactionType.EXPENSE, from, to)
+                .stream()
                 .filter(t -> {
                     Category c = categoryMap.get(t.getCategoryId());
                     return c == null || c.getType() != CategoryType.TRANSFER;
                 })
-                .map(t -> t.getAmount().abs())
-                .reduce(BigDecimal.ZERO, BigDecimal::add);
+                .collect(Collectors.groupingBy(
+                        Transaction::getCurrency,
+                        Collectors.reducing(BigDecimal.ZERO, t -> t.getAmount().abs(), BigDecimal::add)
+                ));
 
-        BigDecimal netFlow = monthlyIncome.subtract(monthlyExpenses);
+        Set<String> allCurrencies = new TreeSet<>();
+        allCurrencies.addAll(incomeByCurrency.keySet());
+        allCurrencies.addAll(expenseByCurrency.keySet());
+
+        List<DashboardController.CurrencyAmount> monthlyIncome = incomeByCurrency.entrySet().stream()
+                .map(e -> new DashboardController.CurrencyAmount(e.getKey(), e.getValue()))
+                .sorted(Comparator.comparing(DashboardController.CurrencyAmount::currency))
+                .toList();
+
+        List<DashboardController.CurrencyAmount> monthlyExpenses = expenseByCurrency.entrySet().stream()
+                .map(e -> new DashboardController.CurrencyAmount(e.getKey(), e.getValue()))
+                .sorted(Comparator.comparing(DashboardController.CurrencyAmount::currency))
+                .toList();
+
+        List<DashboardController.CurrencyAmount> netFlow = allCurrencies.stream()
+                .map(currency -> new DashboardController.CurrencyAmount(
+                        currency,
+                        incomeByCurrency.getOrDefault(currency, BigDecimal.ZERO)
+                                .subtract(expenseByCurrency.getOrDefault(currency, BigDecimal.ZERO))
+                ))
+                .toList();
 
         return new DashboardController.SummaryResponse(totalBalance, monthlyIncome, monthlyExpenses, netFlow);
     }
@@ -74,7 +102,9 @@ public class DashboardService {
         Map<UUID, Category> categoryMap = categoryRepository.findAllByUserIdOrderByName(userId)
                 .stream().collect(Collectors.toMap(Category::getId, c -> c));
 
-        Map<UUID, BigDecimal> totals = transactionRepository
+        record Key(UUID categoryId, String currency) {}
+
+        Map<Key, BigDecimal> totals = transactionRepository
                 .findByUserIdAndTypeAndDateBetween(userId, TransactionType.EXPENSE, from, to)
                 .stream()
                 .filter(t -> {
@@ -82,15 +112,16 @@ public class DashboardService {
                     return c != null && c.getType() != CategoryType.TRANSFER;
                 })
                 .collect(Collectors.groupingBy(
-                        Transaction::getCategoryId,
+                        t -> new Key(t.getCategoryId(), t.getCurrency()),
                         Collectors.reducing(BigDecimal.ZERO, t -> t.getAmount().abs(), BigDecimal::add)
                 ));
 
         return totals.entrySet().stream()
                 .map(e -> {
-                    Category c = categoryMap.get(e.getKey());
+                    Category c = categoryMap.get(e.getKey().categoryId());
                     return new DashboardController.ExpenseByCategoryResponse(
-                            e.getKey(), c.getName(), c.getColor(), e.getValue());
+                            e.getKey().categoryId(), c.getName(), c.getColor(),
+                            e.getKey().currency(), e.getValue());
                 })
                 .sorted(Comparator.comparing(DashboardController.ExpenseByCategoryResponse::total).reversed())
                 .toList();

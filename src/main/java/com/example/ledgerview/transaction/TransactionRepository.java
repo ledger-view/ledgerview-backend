@@ -20,11 +20,4 @@ public interface TransactionRepository extends JpaRepository<Transaction, UUID>,
     @Query("SELECT t.categoryId, COUNT(t) FROM Transaction t WHERE t.userId = :userId GROUP BY t.categoryId")
     List<Object[]> countGroupByCategoryId(@Param("userId") UUID userId);
 
-    @Query("SELECT COALESCE(SUM(t.amount), 0) FROM Transaction t WHERE t.userId = :userId AND t.type = :type AND t.date BETWEEN :from AND :to")
-    BigDecimal sumByUserIdAndTypeAndDateBetween(
-            @Param("userId") UUID userId,
-            @Param("type") TransactionType type,
-            @Param("from") Instant from,
-            @Param("to") Instant to
-    );
 }

@@ -33,6 +33,7 @@ public class TransactionController {
             String title,
             BigDecimal amount,
             TransactionType type,
+            String currency,
             Instant date,
             UUID categoryId,
             UUID accountId,
@@ -84,6 +85,6 @@ public class TransactionController {
 
     private TransactionResponse toResponse(Transaction t) {
         return new TransactionResponse(t.getId(), t.getTitle(), t.getAmount(), t.getType(),
-                t.getDate(), t.getCategoryId(), t.getAccountId(), t.getNote());
+                t.getCurrency(), t.getDate(), t.getCategoryId(), t.getAccountId(), t.getNote());
     }
 }
