@@ -24,21 +24,21 @@ public class CategoryController {
 
     @GetMapping
     public List<CategoryResponse> list(@AuthenticationPrincipal AuthenticatedUser user) {
-        return service.list(user.id()).stream().map(this::toResponse).toList();
+        return service.list(user.id()).stream().map(CategoryResponse::fromCategoryWithCount).toList();
     }
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
     public CategoryResponse create(@RequestBody @Valid CategoryRequest req,
                                    @AuthenticationPrincipal AuthenticatedUser user) {
-        return toResponse(service.create(user.id(), req));
+        return new CategoryResponse(service.create(user.id(), req), 0L);
     }
 
     @PutMapping("/{id}")
     public CategoryResponse update(@PathVariable UUID id,
                                    @RequestBody @Valid CategoryRequest req,
                                    @AuthenticationPrincipal AuthenticatedUser user) {
-        return toResponse(service.update(user.id(), id, req));
+        return new CategoryResponse(service.update(user.id(), id, req), 0L);
     }
 
     @DeleteMapping("/{id}")
@@ -47,13 +47,16 @@ public class CategoryController {
         service.delete(user.id(), id);
     }
 
-    private CategoryResponse toResponse(Category c) {
-        return new CategoryResponse(c.getId(), c.getName(), c.getColor(), c.getType());
-    }
-
     record CategoryRequest(@NotBlank String name, @NotBlank String color, @NotNull CategoryType type) {
     }
 
-    record CategoryResponse(UUID id, String name, String color, CategoryType type) {
+    record CategoryResponse(UUID id, String name, String color, CategoryType type, long transactionCount) {
+        CategoryResponse(Category c, long transactionCount) {
+            this(c.getId(), c.getName(), c.getColor(), c.getType(), transactionCount);
+        }
+
+        static CategoryResponse fromCategoryWithCount(CategoryWithCount cwc) {
+            return new CategoryResponse(cwc.category(), cwc.transactionCount());
+        }
     }
 }
