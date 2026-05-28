@@ -30,7 +30,7 @@ public class Account {
     @Column(nullable = false, length = 32)
     private AccountType type;
 
-    @Column(nullable = false, length = 8)
+    @Column(nullable = false, length = 8, updatable = false)
     private String currency;
 
     @Column(nullable = false, precision = 19, scale = 4)

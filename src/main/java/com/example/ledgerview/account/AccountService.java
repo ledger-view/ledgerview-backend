@@ -23,18 +23,20 @@ public class AccountService {
     }
 
     @Transactional
-    public Account create(UUID userId, AccountController.AccountRequest req) {
+    public Account create(UUID userId, AccountController.AccountCreateRequest req) {
         Account account = new Account();
         account.setUserId(userId);
-        apply(account, req);
+        account.setCurrency(req.currency());
+        account.setBalance(req.balance());
+        apply(account, req.name(), req.institution(), req.type(), req.number());
         return repository.save(account);
     }
 
     @Transactional
-    public Account update(UUID userId, UUID id, AccountController.AccountRequest req) {
+    public Account update(UUID userId, UUID id, AccountController.AccountUpdateRequest req) {
         Account account = repository.findByIdAndUserId(id, userId)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
-        apply(account, req);
+        apply(account, req.name(), req.institution(), req.type(), req.number());
         return repository.save(account);
     }
 
@@ -45,12 +47,10 @@ public class AccountService {
         repository.delete(account);
     }
 
-    private void apply(Account account, AccountController.AccountRequest req) {
-        account.setName(req.name());
-        account.setInstitution(req.institution());
-        account.setType(req.type());
-        account.setCurrency(req.currency());
-        account.setBalance(req.balance());
-        account.setNumber(req.number());
+    private void apply(Account account, String name, String institution, AccountType type, String number) {
+        account.setName(name);
+        account.setInstitution(institution);
+        account.setType(type);
+        account.setNumber(number);
     }
 }

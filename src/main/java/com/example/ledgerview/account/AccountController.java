@@ -17,14 +17,23 @@ import java.util.UUID;
 @RequestMapping(ApiPaths.ACCOUNTS)
 public class AccountController {
 
-    record AccountRequest(
+    record AccountCreateRequest(
             @NotBlank String name,
             @NotBlank String institution,
             @NotNull AccountType type,
             @NotBlank String currency,
             @NotNull BigDecimal balance,
             String number
-    ) {}
+    ) {
+    }
+
+    record AccountUpdateRequest(
+            @NotBlank String name,
+            @NotBlank String institution,
+            @NotNull AccountType type,
+            String number
+    ) {
+    }
 
     record AccountResponse(
             UUID id,
@@ -34,7 +43,8 @@ public class AccountController {
             String currency,
             BigDecimal balance,
             String number
-    ) {}
+    ) {
+    }
 
     private final AccountService service;
 
@@ -49,14 +59,14 @@ public class AccountController {
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    public AccountResponse create(@RequestBody @Valid AccountRequest req,
+    public AccountResponse create(@RequestBody @Valid AccountCreateRequest req,
                                   @AuthenticationPrincipal AuthenticatedUser user) {
         return toResponse(service.create(user.id(), req));
     }
 
     @PutMapping("/{id}")
     public AccountResponse update(@PathVariable UUID id,
-                                  @RequestBody @Valid AccountRequest req,
+                                  @RequestBody @Valid AccountUpdateRequest req,
                                   @AuthenticationPrincipal AuthenticatedUser user) {
         return toResponse(service.update(user.id(), id, req));
     }

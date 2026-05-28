@@ -1,11 +1,11 @@
--- Accounts — user_id matches V9999_0 admin user
+-- Accounts — opening balances (before seed transactions). Final balance applied by UPDATE below.
 INSERT INTO ledgerview.accounts (id, user_id, name, institution, type, currency, balance, number)
 VALUES
-    ('00000000-0000-0000-0000-000000000001', '00000000-0000-0000-0000-000000000001', 'Main Checking',  'Chase',    'CHECKING', 'USD',  4235.40,  '••4821'),
+    ('00000000-0000-0000-0000-000000000001', '00000000-0000-0000-0000-000000000001', 'Main Checking',  'Chase',    'CHECKING', 'USD',  1385.22,  '••4821'),
     ('00000000-0000-0000-0000-000000000002', '00000000-0000-0000-0000-000000000001', 'Savings',        'Marcus',   'SAVINGS',  'USD', 28750.00,  '••0192'),
     ('00000000-0000-0000-0000-000000000003', '00000000-0000-0000-0000-000000000001', 'Revolut EUR',    'Revolut',  'CHECKING', 'EUR',  1242.18,  '••6534'),
-    ('00000000-0000-0000-0000-000000000004', '00000000-0000-0000-0000-000000000001', 'Cash Wallet',    'Cash',     'CASH',     'USD',   180.00,  '—'),
-    ('00000000-0000-0000-0000-000000000005', '00000000-0000-0000-0000-000000000001', 'Crypto Wallet',  'Coinbase', 'CRYPTO',   'USD',  3847.22,  '••e7c2');
+    ('00000000-0000-0000-0000-000000000004', '00000000-0000-0000-0000-000000000001', 'Cash Wallet',    'Cash',     'CASH',     'USD',   186.25,  '—'),
+    ('00000000-0000-0000-0000-000000000005', '00000000-0000-0000-0000-000000000001', 'Crypto Wallet',  'Coinbase', 'CRYPTO',   'USD',  3805.04,  '••e7c2');
 
 -- Categories
 INSERT INTO ledgerview.categories (id, user_id, name, color, type)
@@ -52,3 +52,10 @@ VALUES
     ('00000000-0000-0000-0000-000000000125', '00000000-0000-0000-0000-000000000001', '00000000-0000-0000-0000-000000000001', '00000000-0000-0000-0000-000000000018', 'Transfer to Savings', -1500.00,  'EXPENSE', 'USD', '2026-04-15 08:05:00', ''),
     ('00000000-0000-0000-0000-000000000126', '00000000-0000-0000-0000-000000000001', '00000000-0000-0000-0000-000000000001', '00000000-0000-0000-0000-000000000012', 'Trader Joe''s',        -71.04,   'EXPENSE', 'USD', '2026-04-12 10:00:00', ''),
     ('00000000-0000-0000-0000-000000000127', '00000000-0000-0000-0000-000000000001', '00000000-0000-0000-0000-000000000001', '00000000-0000-0000-0000-000000000014', 'CitiBike annual',     -210.00,   'EXPENSE', 'USD', '2026-04-10 12:00:00', '');
+
+-- Apply seed transaction amounts to account balances (opening balance + transactions = current balance)
+UPDATE ledgerview.accounts a
+SET balance = balance + COALESCE((
+    SELECT SUM(t.amount) FROM ledgerview.transactions t WHERE t.account_id = a.id
+), 0)
+WHERE a.user_id = '00000000-0000-0000-0000-000000000001';
