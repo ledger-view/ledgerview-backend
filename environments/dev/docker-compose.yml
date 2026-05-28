@@ -20,6 +20,7 @@ services:
       - "8443:8443"
     volumes:
       - ./keycloak/realm.json:/opt/keycloak/data/import/realm.json:ro
+      - ../keycloak/themes:/opt/keycloak/themes:ro
     command: start-dev --import-realm
     environment:
       - KC_DB=postgres

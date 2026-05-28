@@ -1,0 +1,343 @@
+@import url('https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600&display=swap');
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+/* ── Typography — scoped, not * to avoid breaking icon fonts ────────────── */
+.login-pf-page,
+.login-pf-page input,
+.login-pf-page button,
+.login-pf-page label,
+.login-pf-page a,
+.login-pf-page h1,
+.login-pf-page span,
+.login-pf-page div,
+.login-pf-page p {
+  font-family: 'Geist', -apple-system, BlinkMacSystemFont, system-ui, sans-serif !important;
+}
+
+/* ── Page background ────────────────────────────────────────────────────── */
+html,
+body {
+  background: #fafafb !important;
+  background-image: none !important;
+  background-color: #fafafb !important;
+  min-height: 100% !important;
+  box-sizing: border-box;
+}
+
+.login-pf-page {
+  min-height: 100vh !important;
+  display: flex !important;
+  flex-direction: column !important;
+  align-items: center !important;
+  justify-content: center !important;
+  padding: 32px 16px !important;
+  background: #fafafb !important;
+  background-image: none !important;
+}
+
+/* ── Brand header ───────────────────────────────────────────────────────── */
+.login-pf-page-header {
+  background: transparent !important;
+  background-image: none !important;
+  box-shadow: none !important;
+  padding: 0 0 16px !important;
+  width: 448px !important;
+  max-width: calc(100vw - 32px) !important;
+  margin-bottom: 0 !important;
+}
+
+#kc-header-wrapper {
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  gap: 9px !important;
+  font-size: 15px !important;
+  font-weight: 600 !important;
+  color: #0f1115 !important;
+  letter-spacing: -0.2px !important;
+  text-transform: none !important;
+  padding: 20px 10px;
+}
+
+#kc-header-wrapper::before {
+  content: '' !important;
+  display: inline-block !important;
+  width: 24px !important;
+  height: 24px !important;
+  border-radius: 6px !important;
+  background-color: #4f46e5 !important;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16' fill='white'%3E%3Crect x='1' y='9' width='4' height='6' rx='1'/%3E%3Crect x='6' y='5' width='4' height='10' rx='1'/%3E%3Crect x='11' y='2' width='4' height='13' rx='1'/%3E%3C/svg%3E") !important;
+  background-size: 14px !important;
+  background-repeat: no-repeat !important;
+  background-position: center !important;
+  flex-shrink: 0 !important;
+}
+
+/* ── Card ───────────────────────────────────────────────────────────────── */
+.card-pf {
+  width: 448px !important;
+  max-width: calc(100vw - 32px) !important;
+  background: #ffffff !important;
+  border: 1px solid #ececef !important;
+  border-radius: 10px !important;
+  box-shadow: 0 1px 0 rgba(15, 17, 21, 0.04), 0 0 0 1px rgba(15, 17, 21, 0.06) !important;
+  padding: 0 !important;
+  margin: 0 !important;
+  overflow: hidden !important;
+  float: none !important;
+}
+
+/* ── Kill PF3 grid floats & padding inside card ─────────────────────────── */
+.card-pf [class*="col-xs-"],
+.card-pf [class*="col-sm-"],
+.card-pf [class*="col-md-"],
+.card-pf [class*="col-lg-"] {
+  float: none !important;
+  padding-left: 0 !important;
+  padding-right: 0 !important;
+  width: 100% !important;
+  max-width: 100% !important;
+}
+
+/* ── Card inner sections ────────────────────────────────────────────────── */
+.login-pf-header {
+  padding: 22px 24px 0 !important;
+}
+
+#kc-content,
+#kc-content-wrapper {
+  padding: 0 !important;
+}
+
+#kc-form-wrapper {
+  padding: 0 24px 20px !important;
+}
+
+#kc-content-wrapper > form {
+  padding: 0 24px 20px !important;
+}
+
+/* ── Form card header — title + "Required fields" hint ──────────────────── */
+#kc-page-title {
+  font-size: 15px !important;
+  font-weight: 600 !important;
+  color: #0f1115 !important;
+  letter-spacing: -0.2px !important;
+  margin: 0 0 16px !important;
+  text-align: left !important;
+}
+
+.login-pf-header > div {
+  display: flex !important;
+  flex-direction: row-reverse !important;
+  align-items: baseline !important;
+  gap: 12px !important;
+  margin-bottom: 16px !important;
+}
+
+.login-pf-header > div > .col-md-10 {
+  flex: 1 !important;
+  width: auto !important;
+}
+
+.login-pf-header > div #kc-page-title {
+  margin: 0 !important;
+}
+
+.login-pf-header > div > .col-xs-12.subtitle,
+.login-pf-header > div > [class*="col-"].subtitle {
+  width: auto !important;
+  flex: 0 0 auto !important;
+  font-size: 11px !important;
+  color: #9ca3af !important;
+  white-space: nowrap !important;
+}
+
+/* ── Form labels + required asterisk ────────────────────────────────────── */
+.form-group [class*="col-"]:has(label) {
+  display: flex !important;
+  align-items: center !important;
+  gap: 3px !important;
+  margin-bottom: 4px !important;
+}
+
+.pf-c-form__label,
+.pf-c-form__label-text {
+  font-size: 11.5px !important;
+  font-weight: 500 !important;
+  color: #6b7280 !important;
+}
+
+.form-group [class*="col-"]:has(label) > .required,
+.form-group [class*="col-"]:has(label) > span.required {
+  color: #dc2626 !important;
+  font-size: 11px !important;
+  font-weight: 600 !important;
+}
+
+/* ── Inputs ─────────────────────────────────────────────────────────────── */
+.pf-c-form-control {
+  height: 34px !important;
+  padding: 0 10px !important;
+  border-radius: 6px !important;
+  border: 1px solid #ececef !important;
+  background: #ffffff !important;
+  font-size: 13px !important;
+  color: #0f1115 !important;
+  box-shadow: none !important;
+  width: 100% !important;
+  transition: border-color 0.12s, box-shadow 0.12s !important;
+  box-sizing: border-box !important;
+}
+
+.pf-c-form-control:focus {
+  border-color: #4f46e5 !important;
+  box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.15) !important;
+  outline: none !important;
+}
+
+/* Password field */
+.pf-c-input-group {
+  display: flex !important;
+  border: none !important;
+  box-shadow: none !important;
+}
+
+.pf-c-input-group .pf-c-form-control {
+  border-radius: 6px 0 0 6px !important;
+  flex: 1 !important;
+  width: auto !important;
+}
+
+.pf-c-button.pf-m-control {
+  background: #f4f4f6 !important;
+  border: 1px solid #ececef !important;
+  border-left: none !important;
+  border-radius: 0 6px 6px 0 !important;
+  color: #6b7280 !important;
+  height: 34px !important;
+  padding: 0 10px !important;
+  flex-shrink: 0 !important;
+  cursor: pointer !important;
+  transition: background 0.12s !important;
+}
+
+.pf-c-button.pf-m-control:hover {
+  background: #ececef !important;
+}
+
+/* ── Form groups — pre-reserve error line to prevent layout shift ────────── */
+.form-group {
+  margin-bottom: 0 !important;
+  padding-bottom: 24px !important;
+}
+
+.form-group:has(#input-error),
+.form-group:has(.pf-m-error) {
+  padding-bottom: 0 !important;
+}
+
+#kc-form-buttons.form-group,
+.form-group:last-child {
+  padding-bottom: 0 !important;
+}
+
+/* ── Inline error messages ───────────────────────────────────────────────── */
+#input-error,
+.pf-c-form__helper-text.pf-m-error,
+.kc-feedback-text {
+  display: block !important;
+  font-size: 11px !important;
+  color: #dc2626 !important;
+  margin-top: 4px !important;
+}
+
+/* ── Alert banner (wrong credentials) ──────────────────────────────────── */
+.pf-c-alert.pf-m-inline {
+  border-radius: 8px !important;
+  margin-bottom: 12px !important;
+  font-size: 12px !important;
+}
+
+/* ── Submit / primary button ─────────────────────────────────────────────── */
+.pf-c-button.pf-m-primary {
+  height: 34px !important;
+  border-radius: 6px !important;
+  background: #4f46e5 !important;
+  border: none !important;
+  color: #ffffff !important;
+  font-size: 12.5px !important;
+  font-weight: 500 !important;
+  width: 100% !important;
+  transition: opacity 0.12s !important;
+  text-shadow: none !important;
+  box-shadow: none !important;
+  cursor: pointer !important;
+  display: block !important;
+}
+
+.pf-c-button.pf-m-primary:hover {
+  opacity: 0.88 !important;
+  background: #4f46e5 !important;
+  box-shadow: none !important;
+}
+
+.pf-c-button.pf-m-primary:focus {
+  box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.25) !important;
+  outline: none !important;
+}
+
+/* ── Options row (remember me / forgot password) ─────────────────────────── */
+.login-pf-settings {
+  padding-bottom: 4px !important;
+}
+
+#kc-form-options {
+  font-size: 12px !important;
+  color: #6b7280 !important;
+}
+
+/* ── Links ───────────────────────────────────────────────────────────────── */
+#kc-content-wrapper a,
+#kc-form a {
+  color: #4f46e5 !important;
+  font-size: 12px !important;
+  text-decoration: none !important;
+}
+
+#kc-content-wrapper a:hover,
+#kc-form a:hover {
+  text-decoration: underline !important;
+}
+
+/* ── "New user? Register" footer — flush with card edges ─────────────────── */
+#kc-info.login-pf-signup {
+  margin: 0 !important;
+  padding: 0 !important;
+  background: transparent !important;
+}
+
+#kc-info-wrapper {
+  padding: 12px 24px 14px !important;
+  background: #fafafb !important;
+  border-top: 1px solid #ececef !important;
+  text-align: center !important;
+  font-size: 12px !important;
+  color: #9ca3af !important;
+  margin: 0 !important;
+  width: 100% !important;
+  box-sizing: border-box !important;
+}
+
+#kc-info-wrapper a {
+  color: #4f46e5 !important;
+}
+
+#kc-content-wrapper > #kc-register-form {
+  padding: 0 48px 20px !important;
+}
