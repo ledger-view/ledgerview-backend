@@ -14,6 +14,7 @@ import java.math.BigDecimal;
 import java.time.Instant;
 import java.time.LocalDate;
 import java.time.ZoneOffset;
+import java.time.temporal.WeekFields;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -125,5 +126,63 @@ public class DashboardService {
                 })
                 .sorted(Comparator.comparing(DashboardController.ExpenseByCategoryResponse::total).reversed())
                 .toList();
+    }
+
+    @Transactional(readOnly = true)
+    public List<DashboardController.CashflowRow> cashflow(UUID userId, int weeks, UUID accountId) {
+        int capped = Math.min(Math.max(weeks, 1), 52);
+        Instant now = Instant.now();
+        LocalDate today = LocalDate.ofInstant(now, ZoneOffset.UTC);
+
+        List<WeekWindow> windows = buildWeekWindows(today, capped);
+        Instant from = windows.get(0).start();
+
+        List<Transaction> txs = accountId != null
+                ? transactionRepository.findByUserIdAndAccountIdAndDateBetween(userId, accountId, from, now)
+                : transactionRepository.findByUserIdAndDateBetween(userId, from, now);
+
+        record Key(String weekLabel, Instant weekStart, String currency, UUID accId) {}
+
+        Map<Key, BigDecimal[]> buckets = new LinkedHashMap<>();
+        for (Transaction t : txs) {
+            WeekWindow w = findWindow(windows, t.getDate());
+            if (w == null) continue;
+            Key k = new Key(w.label(), w.start(), t.getCurrency(), t.getAccountId());
+            BigDecimal[] sums = buckets.computeIfAbsent(k, x -> new BigDecimal[]{BigDecimal.ZERO, BigDecimal.ZERO});
+            if (t.getAmount().compareTo(BigDecimal.ZERO) > 0) {
+                sums[0] = sums[0].add(t.getAmount());
+            } else {
+                sums[1] = sums[1].add(t.getAmount().abs());
+            }
+        }
+
+        return buckets.entrySet().stream()
+                .map(e -> new DashboardController.CashflowRow(
+                        e.getKey().weekLabel(), e.getKey().weekStart(),
+                        e.getKey().currency(), e.getKey().accId(),
+                        e.getValue()[0], e.getValue()[1]))
+                .toList();
+    }
+
+    private record WeekWindow(String label, Instant start, Instant end) {}
+
+    private List<WeekWindow> buildWeekWindows(LocalDate today, int count) {
+        List<WeekWindow> result = new ArrayList<>();
+        for (int i = count - 1; i >= 0; i--) {
+            LocalDate endDate = today.minusDays((long) i * 7);
+            LocalDate startDate = endDate.minusDays(6);
+            Instant startInstant = startDate.atStartOfDay(ZoneOffset.UTC).toInstant();
+            Instant endInstant = endDate.atTime(23, 59, 59).atOffset(ZoneOffset.UTC).toInstant();
+            int weekNum = startDate.get(WeekFields.ISO.weekOfWeekBasedYear());
+            result.add(new WeekWindow("W" + weekNum, startInstant, endInstant));
+        }
+        return result;
+    }
+
+    private WeekWindow findWindow(List<WeekWindow> windows, Instant date) {
+        for (WeekWindow w : windows) {
+            if (!date.isBefore(w.start()) && !date.isAfter(w.end())) return w;
+        }
+        return null;
     }
 }

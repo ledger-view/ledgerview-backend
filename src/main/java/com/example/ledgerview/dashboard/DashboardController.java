@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.math.BigDecimal;
+import java.time.Instant;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.UUID;
@@ -34,6 +35,15 @@ public class DashboardController {
             BigDecimal total
     ) {}
 
+    record CashflowRow(
+            String weekLabel,
+            Instant weekStart,
+            String currency,
+            UUID accountId,
+            BigDecimal income,
+            BigDecimal expense
+    ) {}
+
     private final DashboardService service;
 
     public DashboardController(DashboardService service) {
@@ -43,6 +53,15 @@ public class DashboardController {
     @GetMapping("/summary")
     public SummaryResponse summary(@AuthenticationPrincipal AuthenticatedUser user) {
         return service.summary(user.id());
+    }
+
+    @GetMapping("/cashflow")
+    public List<CashflowRow> cashflow(
+            @RequestParam(defaultValue = "12") int weeks,
+            @RequestParam(required = false) UUID accountId,
+            @AuthenticationPrincipal AuthenticatedUser user
+    ) {
+        return service.cashflow(user.id(), weeks, accountId);
     }
 
     @GetMapping("/expenses-by-category")

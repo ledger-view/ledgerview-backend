@@ -17,6 +17,10 @@ public interface TransactionRepository extends JpaRepository<Transaction, UUID>,
 
     List<Transaction> findByUserIdAndTypeAndDateBetween(UUID userId, TransactionType type, Instant from, Instant to);
 
+    List<Transaction> findByUserIdAndDateBetween(UUID userId, Instant from, Instant to);
+
+    List<Transaction> findByUserIdAndAccountIdAndDateBetween(UUID userId, UUID accountId, Instant from, Instant to);
+
     @Query("SELECT t.categoryId, COUNT(t) FROM Transaction t WHERE t.userId = :userId GROUP BY t.categoryId")
     List<Object[]> countGroupByCategoryId(@Param("userId") UUID userId);
 
