@@ -17,9 +17,16 @@ import java.util.UUID;
 public class CategoryController {
 
     private final CategoryService service;
+    private final ColorPaletteService colorPaletteService;
 
-    public CategoryController(CategoryService service) {
+    public CategoryController(CategoryService service, ColorPaletteService colorPaletteService) {
         this.service = service;
+        this.colorPaletteService = colorPaletteService;
+    }
+
+    @GetMapping("/palette")
+    public ColorPaletteProperties colors() {
+        return colorPaletteService.getProperties();
     }
 
     @GetMapping

@@ -17,10 +17,14 @@ public class CategoryService {
 
     private final CategoryRepository repository;
     private final TransactionRepository transactionRepository;
+    private final ColorPaletteService colorPaletteService;
 
-    public CategoryService(CategoryRepository repository, TransactionRepository transactionRepository) {
+    public CategoryService(CategoryRepository repository,
+                           TransactionRepository transactionRepository,
+                           ColorPaletteService colorPaletteService) {
         this.repository = repository;
         this.transactionRepository = transactionRepository;
+        this.colorPaletteService = colorPaletteService;
     }
 
     @Transactional(readOnly = true)
@@ -67,7 +71,7 @@ public class CategoryService {
 
     private void apply(Category category, CategoryController.CategoryRequest req) {
         category.setName(req.name());
-        category.setColor(req.color());
+        category.setColor(colorPaletteService.normalize(req.color()));
         category.setType(req.type());
     }
 }

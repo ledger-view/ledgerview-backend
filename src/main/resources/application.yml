@@ -16,3 +16,20 @@ spring:
     password: ${spring.datasource.password}
     locations:
       - classpath:/db/migration
+
+application:
+  palette:
+    default-color: '#6366F1'
+    colors:
+      - '#6366F1'
+      - '#3B82F6'
+      - '#0EA5E9'
+      - '#06B6D4'
+      - '#10B981'
+      - '#84CC16'
+      - '#F59E0B'
+      - '#F97316'
+      - '#EF4444'
+      - '#EC4899'
+      - '#A855F7'
+      - '#64748B'
