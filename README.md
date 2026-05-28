@@ -60,3 +60,17 @@ API available at `http://localhost:8080/api`.
 ```
 
 Tests use Testcontainers — no local Postgres needed.
+
+---
+
+## Diagrams
+
+PlantUML sources in [`docs/uml/`](docs/uml/).
+
+| Diagram                                                     | Description                                                                  |
+|-------------------------------------------------------------|------------------------------------------------------------------------------|
+| [`database-schema.puml`](docs/uml/database-schema.puml)     | ER diagram — tables, columns, FK constraints                                 |
+| [`auth-flow.puml`](docs/uml/auth-flow.puml)                 | Sequence diagram — Keycloak PKCE login, token refresh, authenticated request |
+| [`use-cases_1.puml`](docs/uml/use-cases_1.puml)             | Feature overview — UML use case diagram                                      |
+| [`use-cases_2.puml`](docs/uml/use-cases_2.puml)             | Feature overview — mindmap                                                   |
+| [`backend-structure.puml`](docs/uml/backend-structure.puml) | Component diagram — packages, dependencies, cross-domain interactions        |

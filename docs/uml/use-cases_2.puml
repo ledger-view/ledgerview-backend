@@ -1,0 +1,32 @@
+@startmindmap
+!theme plain
+skinparam padding 12
+
+* LedgerView
+
+** Accounts
+*** Create with currency\n+ opening balance
+*** Edit name, institution, type
+*** Delete account
+*** Balance maintained automatically\non every transaction
+
+** Transactions
+*** Add / edit / delete
+*** Balance reconciled on every change
+*** Account switch on update\n(adjusts both accounts)
+*** Filter by account, category,\ntype, date range
+
+left side
+
+** Categories
+*** Create / edit / delete
+*** Color from configurable palette
+*** Transaction count in list response
+*** Delete blocked if transactions exist (409)
+
+** Dashboard
+*** Monthly income · expenses · net flow
+*** Expenses by category
+*** All figures grouped per currency\n(no cross-currency aggregation)
+
+@endmindmap

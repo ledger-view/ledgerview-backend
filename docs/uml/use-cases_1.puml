@@ -1,0 +1,59 @@
+@startuml use-cases
+!theme plain
+left to right direction
+skinparam actorStyle awesome
+skinparam usecaseBorderColor #AAAAAA
+skinparam usecaseBackgroundColor #FAFAFA
+skinparam padding 12
+skinparam nodesep 50
+skinparam ranksep 60
+
+actor "Authenticated\nUser" as U
+
+rectangle "Accounts" {
+  usecase "Create account\n(currency + opening balance)" as AC1
+  usecase "Edit account\n(name, institution, type)" as AC2
+  usecase "Delete account" as AC3
+  usecase "View accounts\nwith live balances" as AC4
+}
+
+rectangle "Transactions" {
+  usecase "Add transaction\n(balance auto-updated)" as TC1
+  usecase "Edit transaction\n(handles account switch)" as TC2
+  usecase "Delete transaction\n(balance reverted)" as TC3
+  usecase "Filter by account,\ncategory, type, date" as TC4
+}
+
+rectangle "Categories" {
+  usecase "Create / edit category" as CC1
+  usecase "Delete category" as CC2
+  usecase "View with\ntransaction count" as CC3
+}
+
+rectangle "Dashboard" {
+  usecase "Monthly summary\n(income · expenses · net flow)" as DC1
+  usecase "Expenses by category" as DC2
+}
+
+U --> AC1
+U --> AC2
+U --> AC3
+U --> AC4
+
+U --> TC1
+U --> TC2
+U --> TC3
+U --> TC4
+
+U --> CC1
+U --> CC2
+U --> CC3
+
+U --> DC1
+U --> DC2
+
+note "All amounts grouped\nper currency" as N
+DC1 .. N
+DC2 .. N
+
+@enduml

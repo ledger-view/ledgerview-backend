@@ -1,0 +1,78 @@
+@startuml backend-structure
+!theme plain
+skinparam componentStyle rectangle
+skinparam linetype ortho
+skinparam nodesep 60
+skinparam ranksep 50
+skinparam padding 10
+skinparam componentBackgroundColor #FAFAFA
+skinparam componentBorderColor #AAAAAA
+skinparam packageBorderColor #CCCCCC
+
+left to right direction
+
+database "PostgreSQL" as DB
+
+package "security" {
+  component "JwtConverter" as JWT
+  component "UnsecuredConfigurer" as Unsec
+}
+
+package "config" {
+  component "ColorPaletteService" as Palette
+  component "CurrencyService\nCurrencyController" as Currency
+}
+
+package "account" {
+  component "AccountController" as AC
+  component "AccountService" as AS
+  component "AccountRepository" as AR
+  AC --> AS
+  AS --> AR
+}
+
+package "category" {
+  component "CategoryController" as CC
+  component "CategoryService" as CS
+  component "CategoryRepository" as CR
+  CC --> CS
+  CS --> CR
+}
+
+package "transaction" {
+  component "TransactionController" as TC
+  component "TransactionService" as TS
+  component "TransactionRepository" as TR
+  TC --> TS
+  TS --> TR
+}
+
+package "dashboard" {
+  component "DashboardController" as DC
+  component "DashboardService" as DS
+  DC --> DS
+}
+
+' DB connections
+AR --> DB
+CR --> DB
+TR --> DB
+
+' Cross-domain (non-obvious)
+TS --> AR   : "update balance\non CRUD"
+CS --> TR   : "count per\ncategory"
+DS --> AR   : "sum balance\nby currency"
+DS --> TR   : "monthly\ntransactions"
+DS --> CR   : "category\nmetadata"
+
+' Config
+AS --> Currency : "validate\ncurrency"
+CS --> Palette  : "normalize\ncolor"
+
+' Security (dashed = cross-cutting)
+JWT -[dashed]-> AC
+JWT -[dashed]-> CC
+JWT -[dashed]-> TC
+JWT -[dashed]-> DC
+
+@enduml

@@ -1,0 +1,57 @@
+@startuml auth-flow
+!theme plain
+skinparam sequenceArrowThickness 2
+skinparam participantPadding 30
+skinparam sequenceMessageAlign left
+skinparam maxMessageSize 200
+skinparam sequenceGroupBodyBackgroundColor transparent
+skinparam responseMessageBelowArrow true
+
+actor       "User"          as U
+participant "Angular App"   as A
+participant "Keycloak"      as KC
+participant "Spring Boot"   as API
+database    "PostgreSQL"    as DB
+
+== Login ==
+
+U  ->  A  : Open app
+|||
+A  ->  KC : Redirect to /realms/ledgerview/login\n(PKCE authorization code flow)
+|||
+U  ->  KC : Submit credentials
+KC ->  A  : Redirect with authorization code
+|||
+A  ->  KC : Exchange code for tokens
+KC ->  A  : JWT access token (signed RS256)
+
+|||
+== Authenticated Request ==
+|||
+
+A  ->  API : GET /api/accounts\nAuthorization: Bearer <JWT>
+|||
+API -> KC  : Fetch JWKS (cached)\nVerify signature + claims
+|||
+API -> DB  : SELECT ... WHERE user_id = <sub from JWT>
+DB  -> API : Result rows
+API -> A   : 200 JSON response
+
+|||
+== Token Refresh ==
+|||
+
+A  ->  KC : POST /token  (refresh_token)
+KC ->  A  : New access token
+
+|||
+== Dev Mode (unsecured profile) ==
+|||
+
+note over U, DB
+  With "unsecured" Spring profile JWT validation is skipped.
+  All requests treated as dev admin user (00000000-…-000001).
+  Never use in production.
+end note
+
+@enduml
