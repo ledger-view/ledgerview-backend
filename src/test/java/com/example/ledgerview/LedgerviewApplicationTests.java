@@ -2,9 +2,11 @@ package com.example.ledgerview;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.context.ActiveProfiles;
 
 @SpringBootTest
-class LedgerviewApplicationTests {
+@ActiveProfiles("unsecured")
+class LedgerviewApplicationTests extends PostgresIntegrationTest {
 
 	@Test
 	void contextLoads() {
