@@ -1,5 +1,6 @@
 package com.example.ledgerview.account;
 
+import com.example.ledgerview.currency.CurrencyService;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentCaptor;
@@ -24,6 +25,9 @@ class AccountServiceTest {
 
     @Mock
     AccountRepository repository;
+
+    @Mock
+    CurrencyService currencyService;
 
     @InjectMocks
     AccountService service;

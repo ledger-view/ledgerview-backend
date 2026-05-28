@@ -18,6 +18,18 @@ spring:
       - classpath:/db/migration
 
 application:
+  currencies:
+    fiat:
+      - 'USD'
+      - 'EUR'
+      - 'GBP'
+      - 'PLN'
+      - 'JPY'
+    crypto:
+      - 'BTC'
+      - 'ETH'
+      - 'USDT'
+      - 'USDC'
   palette:
     default-color: '#6366F1'
     colors:

@@ -11,4 +11,5 @@ public class ApiPaths {
     public static final String CATEGORIES = BASE + "/categories";
     public static final String TRANSACTIONS = BASE + "/transactions";
     public static final String DASHBOARD = BASE + "/dashboard";
+    public static final String CURRENCIES = BASE + "/currencies";
 }

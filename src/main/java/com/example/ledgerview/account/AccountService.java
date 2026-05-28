@@ -1,5 +1,6 @@
 package com.example.ledgerview.account;
 
+import com.example.ledgerview.currency.CurrencyService;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -12,9 +13,11 @@ import java.util.UUID;
 public class AccountService {
 
     private final AccountRepository repository;
+    private final CurrencyService currencyService;
 
-    public AccountService(AccountRepository repository) {
+    public AccountService(AccountRepository repository, CurrencyService currencyService) {
         this.repository = repository;
+        this.currencyService = currencyService;
     }
 
     @Transactional(readOnly = true)
@@ -26,6 +29,7 @@ public class AccountService {
     public Account create(UUID userId, AccountController.AccountCreateRequest req) {
         Account account = new Account();
         account.setUserId(userId);
+        currencyService.validate(req.currency());
         account.setCurrency(req.currency());
         account.setBalance(req.balance());
         apply(account, req.name(), req.institution(), req.type(), req.number());
