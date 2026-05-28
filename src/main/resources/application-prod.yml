@@ -1,0 +1,21 @@
+spring:
+  datasource:
+    url: ${SPRING_DATASOURCE_URL}
+    username: ${SPRING_DATASOURCE_USERNAME}
+    password: ${SPRING_DATASOURCE_PASSWORD}
+  security:
+    oauth2:
+      resourceserver:
+        jwt:
+          issuer-uri: ${APPLICATION_KEYCLOAK_AUTH_SERVER_URL}/realms/${APPLICATION_KEYCLOAK_REALM}
+
+application:
+  keycloak:
+    realm: ${APPLICATION_KEYCLOAK_REALM}
+    auth-server-url: ${APPLICATION_KEYCLOAK_AUTH_SERVER_URL}
+  cors:
+    allowed-origins: ${APPLICATION_CORS_ALLOWED_ORIGINS}
+
+logging:
+  level:
+    com.example.ledgerview: INFO
